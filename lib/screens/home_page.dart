@@ -58,14 +58,54 @@ class HomePageState extends State<HomePage>
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text('My Reading List',
-                  style:
-                      GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold)),
-              background: Image.network(
-                'https://images.unsplash.com/photo-1507842217343-583bb7270b66',
-                fit: BoxFit.cover,
-              ),
+            flexibleSpace: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final bool isCollapsed =
+                    constraints.maxHeight <= kToolbarHeight + 30;
+                final double expandRatio =
+                    (constraints.maxHeight - kToolbarHeight) /
+                        (200.0 - kToolbarHeight);
+
+                return FlexibleSpaceBar(
+                  title: Text(
+                    'My Reading List',
+                    style: GoogleFonts.playfairDisplay(
+                      fontWeight: FontWeight.bold,
+                      color: Color.lerp(
+                          Colors.white, Colors.black, 1 - expandRatio),
+                      shadows: [
+                        if (!isCollapsed)
+                          const Shadow(
+                            offset: Offset(1.0, 1.0),
+                            blurRadius: 3.0,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                      ],
+                    ),
+                  ),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        'https://images.unsplash.com/photo-1507842217343-583bb7270b66',
+                        fit: BoxFit.cover,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.3),
+                              Colors.black.withOpacity(0.7),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             leading: IconButton(
               icon: const Icon(Icons.menu),
